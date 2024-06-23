@@ -3,15 +3,20 @@ const express = require('express');
 const { PORT } = require('./config/serverConfig');
 
 // const { sendBasicEmail } = require('./services/email-service');
-var cron = require('node-cron');
+
+const jobs = require('./utils/job')
+const TicketController = require('./controllers/ticket-controller');
 
 const setupAndStartServer = ()=>{
     const app = express();
     app.use(express.json());
     app.use(express.urlencoded({extended:true}));
+
+    app.post('/api/v1/tickets', TicketController.create);
+    
     app.listen(PORT, () => {
         console.log(`Listeninng on port: ${PORT}`);
-
+        jobs();
         // const response = sendBasicEmail(
         //     'support@admin.com',
         //     'akshatkba24@gmail.com',
@@ -20,9 +25,9 @@ const setupAndStartServer = ()=>{
         // );
 
         // console.log(response);
-        cron.schedule('* * * * *', () => {
-            console.log('running a task every minute');
-        });
+        // cron.schedule('* * * * *', () => {
+        //     console.log('running a task every minute');
+        // });
 
     })
 }
